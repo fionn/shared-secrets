@@ -1,0 +1,67 @@
+TO BE READ IN THE EVENT OF AN EMERGENCY
+=======================================
+
+Verification
+------------
+
+Ensure the request to share this secret is legitimate. This means
+that you must verify that the person making the request is 1)
+authorised to do so and 2) not being impersonated.
+
+Extraction
+----------
+
+There's a tarball with multiple PGP-encrypted files of the format
+secret_file.NNN.gpg, where NNN is a three digit number.
+Extract the contents of the tarball with
+
+    tar -xvf secret_file.tar.bz2.
+
+Your current directory should now contain:
+
+    secret_file.NNN.gpg   (multiple versions)
+    secret_file.checksums (SHA-256 hashes)
+    README                (this file)
+
+Decryption
+----------
+
+One of the files has been encrypted with your PGP public key. Decrypt
+it with
+
+    gpg --decrypt --use-embedded-filename secret_file.NNN.gpg
+
+to produce secret_file.NNN. If you don't know which file has been
+encrypted for you, run the above command against all files, e.g.
+
+    for file in secret_file.*.gpg; do gpg --decrypt --use-embedded-filename $file; done,
+
+which will fail on all but one file.
+
+When sharing the decrypted file, it is important to leave the name
+intact. You should not expect the contents of the file to be human
+readable.
+
+Troubleshooting
+---------------
+
+Verify that the checksum of the secret matches the expected value.
+
+Recombination
+-------------
+
+If you are attempting to reconstruct the secret:
+- install libgfshare using your favourite package manager,
+- collect the threshold number n of partial secrets of the form
+  secret_file.NNN,
+- combine the n partial secrets with
+
+    gfcombine secret_file.NNN_1 ... secret_file.NNN_n,
+
+  producing the original secret secret_file.
+
+Sharing
+-------
+
+Take the decrypted file secret_file.NNN and send it via a secure
+channel to the recipient.
